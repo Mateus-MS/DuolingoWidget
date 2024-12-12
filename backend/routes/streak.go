@@ -3,6 +3,7 @@ package routes
 import (
 	"errors"
 	"fmt"
+	"image/png"
 	"io"
 	"net/http"
 	"regexp"
@@ -42,8 +43,11 @@ func StreakRoute(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	img := utils.CreateWidget(streak)
+
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(streak))
+	w.Header().Set("Content-Type", "image/png")
+	png.Encode(w, img)
 
 }
 
