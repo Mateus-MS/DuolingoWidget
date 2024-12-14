@@ -25,6 +25,12 @@ func StreakRoute(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	mood, err := utils.QueryFromURL[string]("mood", r)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
 	response, err := http.Get(fmt.Sprintf("https://www.duolingo.com/2017-06-30/users/%s", userID))
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -44,7 +50,7 @@ func StreakRoute(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	img := widget.Create(streak)
+	img := widget.Create(streak, mood)
 
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "image/png")
