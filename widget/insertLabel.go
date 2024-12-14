@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/Mateus-MS/DuolingoWidget/utils"
 	"golang.org/x/image/font"
 	"golang.org/x/image/font/opentype"
 	"golang.org/x/image/math/fixed"
@@ -19,7 +20,7 @@ func InsertLabel(img *image.RGBA, streak string) {
 		panic(err)
 	}
 
-	fontBytes, err := os.ReadFile(filepath.Join(wd, "assets", "fonts", "MADE_Tommy_Soft_Bold_PERSONAL_USE.otf")) // Change to your font's path
+	fontBytes, err := os.ReadFile(filepath.Join(wd, "assets", "fonts", "MADE_Tommy_Soft_Bold_PERSONAL_USE.otf"))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -29,7 +30,7 @@ func InsertLabel(img *image.RGBA, streak string) {
 		log.Fatalf("failed to parse font: %v", err)
 	}
 	face, err := opentype.NewFace(f, &opentype.FaceOptions{
-		Size:    60,
+		Size:    70,
 		DPI:     72,
 		Hinting: font.HintingNone,
 	})
@@ -44,11 +45,15 @@ func InsertLabel(img *image.RGBA, streak string) {
 	}
 
 	textWidth := d.MeasureString(streak).Round()
-	textHeight := face.Metrics().Height.Round()
 
-	centerX := (img.Bounds().Dx() - textWidth) / 2
-	centerY := textHeight - 5
+	streakRightPadding := 8
 
-	d.Dot = fixed.Point26_6{fixed.Int26_6(centerX) << 6, fixed.Int26_6(centerY) << 6}
+	totalWidth := 47 + streakRightPadding + textWidth
+	padding := (img.Bounds().Dx() - totalWidth) / 2
+
+	utils.InsertImage(img, filepath.Join(wd, "assets", "images", "s.png"), padding, 27)
+
+	d.Dot = fixed.Point26_6{fixed.Int26_6(padding+47+streakRightPadding) << 6, fixed.Int26_6(81) << 6}
 	d.DrawString(streak)
+
 }
